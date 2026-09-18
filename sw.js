@@ -1,5 +1,7 @@
-// كۆزنەك كىنوخانىسى - Service Worker (v3.0 Secure Offline Storage Engine)
-const CACHE_NAME = 'koznak-cinema-cache-v3.0';
+// كۆزنەك كىنوخانىسى - Service Worker (v3.1)
+const CACHE_NAME = 'koznak-cinema-cache-v3.1';
+const VIDEO_CACHE_NAME = 'koznak-offline-videos-v1';
+
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -21,7 +23,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
+          if (key !== CACHE_NAME && key !== VIDEO_CACHE_NAME) {
             return caches.delete(key);
           }
         })
@@ -34,12 +36,23 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // مېدىيا تەلەپلىرى يەرلىك مەخپىي ئېقىم ئارقىلىق بىر تەرەپ قىلىنىدۇ
-  if (req.url.includes('.mp4') || req.url.includes('.m3u8') || req.url.includes('archive.org/download/')) {
+  // تورسىز فىلىملەر يەرلىك سىن سىغىمىدىن ئېلىنىدۇ
+  if (req.url.includes('.mp4') || req.url.includes('archive.org/download/')) {
+    event.respondWith(
+      caches.open(VIDEO_CACHE_NAME).then(async (cache) => {
+        const cachedResponse = await cache.match(req);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(req).catch(() => {
+          return new Response('سىن تورسىز تېپىلمىدى', { status: 503 });
+        });
+      })
+    );
     return;
   }
 
-  // Firebase ئۇچۇرلىرىنى تور ئارقىلىق يېڭىلاش
+  // Firebase ئۇچۇرلىرىنى ئالدى بىلەن توردىن ئېلىش
   if (url.origin.includes('firebaseio.com')) {
     event.respondWith(
       fetch(req).catch(() => caches.match(req))
@@ -47,7 +60,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ئادەتتىكى بېكەت كۆرۈنۈشى بايلىقلىرىنى تېز يۈكلەش
+  // ئادەتتىكى بېكەت ھۆججەتلىرى
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
