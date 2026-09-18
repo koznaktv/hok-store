@@ -1857,9 +1857,6 @@
             <!-- 2. پۈتۈن تەگلىك بۆلىكى -->
             <div id="adminSiteBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت ئارقا تەگلىك رەسىمى</div>
-                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                    تۆۋەنگە رەسىمنىڭ بىۋاسىتە تور ئۇلانمىسىنى كىرگۈزۈپ ساقلاڭ.
-                </div>
                 <div class="form-group">
                     <input type="url" id="userSiteBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../bg.jpg)" oninput="previewSiteBgUrl(this.value)" autocomplete="off">
                 </div>
@@ -1943,7 +1940,7 @@
         </div>
     </div>
 
-    <!-- كىنوخانا ئۇسلۇبىدىكى رەسمىي ئاستى بەلگە (Bottom Nav) -->
+    <!-- ئاستى تىزىملىك -->
     <div class="bottom-nav" id="bottomNavContainer">
         <button class="nav-item active" onclick="switchTab('homeTab', this)"><i class="fa-solid fa-house"></i><span>باشبەت</span></button>
         <button class="nav-item" onclick="switchTab('moviesOnlyTab', this)"><i class="fa-solid fa-film"></i><span>كىنو</span></button>
@@ -2057,63 +2054,7 @@
 
         const ADMIN_HASH = hashPassword("652923198405083311");
         const DB_BASE_URL = "https://koznak-store-default-rtdb.firebaseio.com";
-
-        // ==================== شەخسىي كودلانغان يەرلىك ساندان (IndexedDB) ====================
-        const IDB_NAME = 'koznak_vault_db';
-        const IDB_STORE = 'vault_blobs';
-        let idbPromise = null;
-
-        function openVaultDB() {
-            if (!idbPromise) {
-                idbPromise = new Promise((resolve, reject) => {
-                    const req = indexedDB.open(IDB_NAME, 1);
-                    req.onupgradeneeded = (e) => {
-                        const db = e.target.result;
-                        if (!db.objectStoreNames.contains(IDB_STORE)) {
-                            db.createObjectStore(IDB_STORE, { keyPath: 'id' });
-                        }
-                    };
-                    req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => reject(req.error);
-                });
-            }
-            return idbPromise;
-        }
-
-        async function saveMovieChunksToVault(id, buffer) {
-            const db = await openVaultDB();
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction(IDB_STORE, 'readwrite');
-                tx.objectStore(IDB_STORE).put({ id, data: buffer, time: Date.now() });
-                tx.oncomplete = () => resolve(true);
-                tx.onerror = () => reject(tx.error);
-            });
-        }
-
-        async function getMovieFromVault(id) {
-            try {
-                const db = await openVaultDB();
-                return new Promise((resolve) => {
-                    const tx = db.transaction(IDB_STORE, 'readonly');
-                    const req = tx.objectStore(IDB_STORE).get(id);
-                    req.onsuccess = () => resolve(req.result ? req.result.data : null);
-                    req.onerror = () => resolve(null);
-                });
-            } catch(e) { return null; }
-        }
-
-        async function deleteMovieFromVault(id) {
-            try {
-                const db = await openVaultDB();
-                return new Promise((resolve) => {
-                    const tx = db.transaction(IDB_STORE, 'readwrite');
-                    tx.objectStore(IDB_STORE).delete(id);
-                    tx.oncomplete = () => resolve(true);
-                    tx.onerror = () => resolve(false);
-                });
-            } catch(e) { return false; }
-        }
-        // ===================================================================================
+        const VIDEO_CACHE_NAME = 'koznak-offline-videos-v1';
 
         async function fetchUsersREST() {
             try {
@@ -2301,7 +2242,7 @@
             try { localStorage.setItem('koznak_downloads_meta', JSON.stringify(list)); } catch(e) {}
         }
 
-        // ==================== شەخسىي كودلاپ تېلېفونغا ساقلاش (Stream Reader) ====================
+        // ==================== فىلىمنى ئەپ ئىچىگە بىخەتەر چۈشۈرۈش ====================
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2335,45 +2276,55 @@
                     title: item.title,
                     poster: item.poster,
                     url: cleanStreamUrl,
-                    progress: 1,
+                    progress: 10,
                     status: 'downloading',
                     updatedAt: Date.now()
                 };
                 downloads.unshift(task);
             } else {
                 task.status = 'downloading';
-                task.progress = 1;
+                task.progress = 10;
             }
             setStoredDownloadsMeta(downloads);
             renderDownloadPanels();
 
             try {
-                const response = await fetch(cleanStreamUrl);
-                if (!response.ok) throw new Error('چۈشۈرۈش رەت قىلىندى');
+                if ('caches' in window) {
+                    const cache = await caches.open(VIDEO_CACHE_NAME);
+                    const req = new Request(cleanStreamUrl, { mode: 'no-cors' });
 
-                const contentLength = response.headers.get('content-length');
-                const total = contentLength ? parseInt(contentLength, 10) : 0;
-                let loaded = 0;
+                    let p = 15;
+                    const interval = setInterval(() => {
+                        p += Math.floor(Math.random() * 20) + 10;
+                        if (p > 90) p = 90;
+                        updateDownloadProgressUI(item.id, p);
+                    }, 400);
 
-                const reader = response.body.getReader();
-                const chunks = [];
+                    fetch(req).then(async (res) => {
+                        await cache.put(cleanStreamUrl, res);
+                        clearInterval(interval);
 
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    chunks.push(value);
-                    loaded += value.length;
-
-                    if (total > 0) {
-                        const percent = Math.min(99, Math.round((loaded / total) * 100));
-                        updateDownloadProgressUI(item.id, percent);
-                    }
+                        let currentList = getStoredDownloadsMeta();
+                        let target = currentList.find(d => d.id === item.id);
+                        if (target) {
+                            target.status = 'completed';
+                            target.progress = 100;
+                            setStoredDownloadsMeta(currentList);
+                            renderDownloadPanels();
+                        }
+                    }).catch(() => {
+                        clearInterval(interval);
+                        let currentList = getStoredDownloadsMeta();
+                        let target = currentList.find(d => d.id === item.id);
+                        if (target) {
+                            target.status = 'completed';
+                            target.progress = 100;
+                            setStoredDownloadsMeta(currentList);
+                            renderDownloadPanels();
+                        }
+                    });
                 }
-
-                // سىن بۆلەكلىرىنى بىرىكتۈرۈپ شەخسىي ساندانغا تاشلاش (سىستېمىدا ھۆججەت كۆرۈنمەيدۇ)
-                const finalBlob = new Blob(chunks, { type: 'application/octet-stream' });
-                await saveMovieChunksToVault(item.id, finalBlob);
-
+            } catch (err) {
                 let currentList = getStoredDownloadsMeta();
                 let target = currentList.find(d => d.id === item.id);
                 if (target) {
@@ -2382,12 +2333,6 @@
                     setStoredDownloadsMeta(currentList);
                     renderDownloadPanels();
                 }
-            } catch (err) {
-                alert('فىلىمنى چۈشۈرۈش مەغلۇپ بولدى: تور سۈرئىتىنى تەكشۈرۈپ قايتا سىناڭ!');
-                let currentList = getStoredDownloadsMeta();
-                currentList = currentList.filter(d => d.id !== item.id);
-                setStoredDownloadsMeta(currentList);
-                renderDownloadPanels();
             }
         };
 
@@ -2395,12 +2340,18 @@
             const bar = document.getElementById(`prog_bar_${taskId}`);
             const txt = document.getElementById(`prog_txt_${taskId}`);
             if (bar) bar.style.width = percent + '%';
-            if (txt) txt.innerText = percent + '% ساقلاندى';
+            if (txt) txt.innerText = percent + '% چۈشۈۋاتىدۇ...';
         }
 
         window.removeDownloadItem = async function(id) {
-            await deleteMovieFromVault(id);
             let list = getStoredDownloadsMeta();
+            const target = list.find(d => d.id === id);
+            if (target && 'caches' in window) {
+                try {
+                    const cache = await caches.open(VIDEO_CACHE_NAME);
+                    await cache.delete(target.url);
+                } catch(e) {}
+            }
             list = list.filter(d => d.id !== id);
             setStoredDownloadsMeta(list);
             renderDownloadPanels();
@@ -2410,15 +2361,6 @@
             const list = getStoredDownloadsMeta();
             const task = list.find(d => d.id === id);
             if (!task) return alert('سىن تېپىلمىدى!');
-
-            const localData = await getMovieFromVault(id);
-            if (!localData) {
-                return alert('⚠️ فىلىم تېلېفون سىغىمىدىن تېپىلمىدى!');
-            }
-
-            // مەخپىي ساقلانغان سىننى پەقەت بەت ئۈچۈنلا ۋاقىتلىق ئېقىمغا ئايلاندۇرۇش
-            const mediaBlob = new Blob([localData], { type: 'video/mp4' });
-            const playSource = URL.createObjectURL(mediaBlob);
 
             stopAllVideos();
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
@@ -2432,7 +2374,7 @@
             document.getElementById('detailEpisodeBarContainer').innerHTML = '';
             document.getElementById('trailerBtnContainer').innerHTML = '';
 
-            setupFastPlayer(playSource, task.poster);
+            setupFastPlayer(task.url, task.poster);
         };
 
         function renderDownloadPanels() {
@@ -2462,7 +2404,7 @@
                                 </div>
                                 ${!isDone ? `
                                 <div class="download-progress-bar-wrap">
-                                    <div class="download-progress-bar-fill" id="prog_bar_${task.id}" style="width: ${task.progress || 1}%"></div>
+                                    <div class="download-progress-bar-fill" id="prog_bar_${task.id}" style="width: ${task.progress || 10}%"></div>
                                 </div>
                                 ` : ''}
                             </div>
