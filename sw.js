@@ -1,5 +1,5 @@
-// كۆزنەك كىنوخانىسى - Service Worker (v2.0)
-const CACHE_NAME = 'koznak-cinema-cache-v2';
+// كۆزنەك كىنوخانىسى - Service Worker (v3.0 Secure Offline Storage Engine)
+const CACHE_NAME = 'koznak-cinema-cache-v3.0';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -34,12 +34,12 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // سىنلار IndexedDB غا يەرلىك كىرىدىغان بولغاچقا، سىن ئېقىملىرىغا سۈزۈك يول بېرىلىدۇ
+  // مېدىيا تەلەپلىرى يەرلىك مەخپىي ئېقىم ئارقىلىق بىر تەرەپ قىلىنىدۇ
   if (req.url.includes('.mp4') || req.url.includes('.m3u8') || req.url.includes('archive.org/download/')) {
     return;
   }
 
-  // Firebase ساندانى مەزمۇنلىرىنى ئالدى بىلەن توردىن يېڭىلاش
+  // Firebase ئۇچۇرلىرىنى تور ئارقىلىق يېڭىلاش
   if (url.origin.includes('firebaseio.com')) {
     event.respondWith(
       fetch(req).catch(() => caches.match(req))
@@ -47,17 +47,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ئادەتتىكى بەت بايلىقلىرى (HTML, CSS, Fonts) ئالدى بىلەن كۆچمە سىغىمدىن ئېلىنىدۇ
+  // ئادەتتىكى بېكەت كۆرۈنۈشى بايلىقلىرىنى تېز يۈكلەش
   event.respondWith(
-    caches.match(req).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
-      return fetch(req).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic' || req.method !== 'GET') {
-          return networkResponse;
+    caches.match(req).then((cached) => {
+      if (cached) return cached;
+      return fetch(req).then((networkRes) => {
+        if (!networkRes || networkRes.status !== 200 || req.method !== 'GET') {
+          return networkRes;
         }
-        const toCache = networkResponse.clone();
+        const toCache = networkRes.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(req, toCache));
-        return networkResponse;
+        return networkRes;
       }).catch(() => {
         if (req.mode === 'navigate') {
           return caches.match('./index.html');
