@@ -1116,6 +1116,16 @@
 </head>
 <body>
 
+    <!-- پۈتۈن بېكەت يېزىقلىرىنى تەھرىرلەش قورالى (پەقەت باشقۇرغۇچى ئۈچۈن) -->
+    <div id="adminTextEditBar" style="display:none; position:fixed; bottom:85px; left:16px; z-index:99999; background:rgba(20,24,35,0.95); border:1px solid #ff2a44; border-radius:30px; padding:6px 14px; box-shadow:0 8px 25px rgba(0,0,0,0.7); align-items:center; gap:8px;">
+        <button type="button" id="toggleEditBtn" onclick="toggleSiteTextEdit()" style="background:#ff2a44; color:#fff; border:none; border-radius:20px; padding:6px 12px; font-size:11px; font-weight:800; cursor:pointer;">
+            <i class="fa-solid fa-pen-to-square"></i> خەت تەھرىرلەش
+        </button>
+        <button type="button" id="saveAllTextsBtn" onclick="saveSiteTextsToCloud()" style="display:none; background:#2ed573; color:#fff; border:none; border-radius:20px; padding:6px 12px; font-size:11px; font-weight:800; cursor:pointer;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> ساقلاش
+        </button>
+    </div>
+
     <div id="offlineAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: 9999999; align-items: center; justify-content: center; padding: 20px;">
         <div style="background: var(--surface-card); border: 1px solid var(--border-glow); border-radius: 26px; padding: 26px 20px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); direction: rtl;">
             <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255, 42, 68, 0.15); color: #ff3b30; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 14px auto;">
@@ -2056,6 +2066,75 @@
         const DB_BASE_URL = "https://koznak-store-default-rtdb.firebaseio.com";
         const VIDEO_CACHE_NAME = 'koznak-offline-videos-v1';
 
+        // ==================== باشقۇرغۇچىنىڭ پۈتۈن بېكەت خەتلىرىنى تەھرىرلەش ئىقتىدارى ====================
+        let isEditModeActive = false;
+
+        window.toggleSiteTextEdit = function() {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return;
+            isEditModeActive = !isEditModeActive;
+            
+            const editBtn = document.getElementById('toggleEditBtn');
+            const saveBtn = document.getElementById('saveAllTextsBtn');
+            
+            const editableElements = document.querySelectorAll('h1, h2, h3, h4, .section-title, .home-top-title-row, .splash-brand-text, .splash-slogan-ug, .cat-chip, .quick-icon-label');
+            
+            editableElements.forEach((el, index) => {
+                el.contentEditable = isEditModeActive;
+                if (!el.getAttribute('data-text-id')) {
+                    el.setAttribute('data-text-id', 'site_text_' + index);
+                }
+                if (isEditModeActive) {
+                    el.style.outline = '1px dashed #ff2a44';
+                    el.style.cursor = 'text';
+                } else {
+                    el.style.outline = 'none';
+                    el.style.cursor = 'default';
+                }
+            });
+
+            if (isEditModeActive) {
+                editBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> تاقاش';
+                saveBtn.style.display = 'inline-block';
+                alert('✍️ يېزىق تەھرىرلەش ئېچىلدى!\nئېكراندىكى خالىغان خەتنى بېسىپ ئۆزگەرتىپ، ئاندىن «ساقلاش»نى بېسىڭ.');
+            } else {
+                editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> خەت تەھرىرلەش';
+                saveBtn.style.display = 'none';
+            }
+        };
+
+        window.saveSiteTextsToCloud = async function() {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return;
+            
+            const textData = {};
+            const editableElements = document.querySelectorAll('[data-text-id]');
+            
+            editableElements.forEach(el => {
+                const id = el.getAttribute('data-text-id');
+                textData[id] = el.innerText.trim();
+            });
+
+            try {
+                if (window.dbSet && window.db) {
+                    await window.dbSet(window.dbRef(window.db, 'settings/custom_site_texts'), textData);
+                }
+                alert('🎉 بارلىق خەتلەر مۇۋەپپەقىيەتلىك ساقلاندى! بارلىق ئابونتلارغا ئاپتوماتىك يېڭىلىنىدۇ.');
+                toggleSiteTextEdit();
+            } catch(e) {
+                alert('ساقلاشتا كاشىلا كۆرۈلدى: ' + e.message);
+            }
+        };
+
+        function applyStoredSiteTexts(textData) {
+            if (!textData) return;
+            Object.keys(textData).forEach(id => {
+                const targetEl = document.querySelector(`[data-text-id="${id}"]`);
+                if (targetEl && !isEditModeActive) {
+                    targetEl.innerText = textData[id];
+                }
+            });
+        }
+        // =========================================================================================
+
         async function fetchUsersREST() {
             try {
                 const res = await fetch(`${DB_BASE_URL}/users.json`);
@@ -2242,7 +2321,6 @@
             try { localStorage.setItem('koznak_downloads_meta', JSON.stringify(list)); } catch(e) {}
         }
 
-        // ==================== فىلىمنى ئەپ ئىچىگە بىخەتەر چۈشۈرۈش ====================
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2861,6 +2939,10 @@
 
             const adminMenu = document.getElementById('adminMenuSectionWrapper');
             if (adminMenu) adminMenu.style.display = isAdmin ? 'block' : 'none';
+
+            // پەقەت باشقۇرغۇچى كىرگەندە پۈتۈن بېكەت خەت تەھرىرلەش بالدىقىنى كۆرسىتىش
+            const editBar = document.getElementById('adminTextEditBar');
+            if (editBar) editBar.style.display = isAdmin ? 'flex' : 'none';
         };
 
         function setupFastPlayer(url, poster = '') {
@@ -4212,6 +4294,7 @@
                 }
             });
 
+            // ساندان تەڭشەكلىرى ۋە ئۆزگەرتىلگەن پۈتۈن بېكەت خەتلىرىنى ئوقۇش
             window.dbOnValue(window.dbRef(window.db, 'settings'), snap => {
                 const s = snap.val() || {};
                 isGlobalFreeEnabled = !!s.globalFree;
@@ -4236,6 +4319,9 @@
                 }
                 if (s.globalSiteBgImage && !localStorage.getItem('koznak_site_custom_bg')) {
                     window.applyFullSiteBg(s.globalSiteBgImage);
+                }
+                if (s.custom_site_texts) {
+                    applyStoredSiteTexts(s.custom_site_texts);
                 }
             });
         };
