@@ -61,7 +61,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gulzar&family=Noto+Naskh+Arabic:wght@500;700&family=Noto+Sans+Arabic:wght@400;600;700;800;900&display=swap');
 
-        /* رەسمىي، كۆزگە راھەت كىنوخانا قارا ئالتۇن ئۇسلۇبى */
         :root {
             --bg-color: #0b0c10;
             --bg-gradient: radial-gradient(circle at 15% 10%, rgba(255, 42, 68, 0.12), transparent 45%), radial-gradient(circle at 85% 85%, rgba(255, 170, 0, 0.08), transparent 45%), #0b0c10;
@@ -361,7 +360,6 @@
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
         }
-        /* دەسلەپتە پۈتۈن بويىچە ئەسلى سۈپەت كۆرۈنۈشى */
         .shorts-main-video {
             width: 100%; height: 100%;
             object-fit: contain;
@@ -952,7 +950,6 @@
             background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-glow);
         }
 
-        /* كىنوخانا ئاستى تىزىملىكى (رەسمىي ئۇسلۇب) */
         .bottom-nav {
             position: fixed; bottom: 14px; left: 50%;
             transform: translateX(-50%); width: calc(100% - 20px); max-width: 520px;
@@ -1119,7 +1116,6 @@
 </head>
 <body>
 
-    <!-- تورسىز ھالەت ئەسكەرتىش كۆزنىكى -->
     <div id="offlineAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: 9999999; align-items: center; justify-content: center; padding: 20px;">
         <div style="background: var(--surface-card); border: 1px solid var(--border-glow); border-radius: 26px; padding: 26px 20px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); direction: rtl;">
             <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255, 42, 68, 0.15); color: #ff3b30; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 14px auto;">
@@ -1127,7 +1123,7 @@
             </div>
             <h3 style="font-size: 17px; font-weight: 900; margin-bottom: 8px; color: #fff;">تور ئۇلانمىسى يوق</h3>
             <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
-                ھازىر تور يوق ھالەتتە تۇرۇۋاتىسىز. «تامام»نى باسسىڭىز تېلېفون سىغىمىغا چۈشۈرۈلگەن سىنلارنى داۋاملىق كۆرەلەيسىز.
+                ھازىر تور يوق ھالەتتە تۇرۇۋاتىسىز. «تامام»نى باسسىڭىز تېلېفونغا ساقلانغان مەزمۇنلارنى كۆرەلەيسىز.
             </p>
             <div style="display: flex; gap: 10px;">
                 <button type="button" onclick="confirmOfflineMode()" style="flex: 1; padding: 11px; border: none; border-radius: 35px; background: #ff2a44; color: #fff; font-size: 12.5px; font-weight: 800; cursor: pointer;">
@@ -1140,7 +1136,6 @@
         </div>
     </div>
 
-    <!-- كىرىش كۆزنىكى -->
     <div id="authOverlay">
         <div class="auth-card">
             <div class="splash-cinema-icon" style="margin: 0 auto 10px auto;"><i class="fa-solid fa-film"></i></div>
@@ -1309,7 +1304,6 @@
 
             <div id="shortsPlayIcon" class="shorts-play-indicator"><i class="fa-solid fa-play"></i></div>
 
-            <!-- دەسلەپكى ئۆلچەم: ئەسلى سۈپەتتە (contain) قويۇلىدۇ -->
             <video id="shortsPlayerVideo" class="shorts-main-video" playsinline webkit-playsinline x5-video-player-type="h5" preload="auto"></video>
             <video id="shortsPreloadBuffer" style="display:none;" preload="auto" muted></video>
 
@@ -1383,7 +1377,6 @@
                 </div>
             </div>
 
-            <!-- ئەسلى سۈپەت دەسلەپتە بېكىتىلگەن ھالەت -->
             <div class="shorts-setting-item">
                 <div class="shorts-setting-title">ئېكرانغا سىغدۇرۇش ھالىتى</div>
                 <div class="shorts-option-row">
@@ -1541,7 +1534,7 @@
 
             <div id="accountDownSection" style="display: none;">
                 <div class="section-title" style="font-size: 13px; margin: 10px 0;">
-                    <i class="fa-solid fa-download" style="color:#ff2a44;"></i> تېلېفون سىغىمىغا چۈشكەن فىلىملەر (تورسىز قويغىلى بولىدۇ)
+                    <i class="fa-solid fa-download" style="color:#ff2a44;"></i> تېلېفون سىغىمىغا كودلاپ ساقلانغان فىلىملەر (پەقەت ئەپ ئىچىدىلا كۆرگىلى بولىدۇ)
                 </div>
                 <div id="completedDownloadsContainer"></div>
             </div>
@@ -1865,7 +1858,7 @@
             <div id="adminSiteBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت ئارقا تەگلىك رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                    تۆۋەنگە رەسىمنىڭ بىۋاسىتە تور ئۇلانمىسىنى (HTML Image URL) كىرگۈزۈپ ساقلاڭ. ئاپتوماتىك پۈتۈن توربەت تەگلىكىگە ئايلىنىدۇ.
+                    تۆۋەنگە رەسىمنىڭ بىۋاسىتە تور ئۇلانمىسىنى كىرگۈزۈپ ساقلاڭ.
                 </div>
                 <div class="form-group">
                     <input type="url" id="userSiteBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../bg.jpg)" oninput="previewSiteBgUrl(this.value)" autocomplete="off">
@@ -1884,9 +1877,6 @@
             <!-- 3. لوزۇنكا تەگلىكى بۆلىكى -->
             <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff2a44;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
-                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                    لوزۇنكا رەسىمىنىڭ تور ئۇلانمىسىنى كىرگۈزسىڭىز، باش بەت ئۈستىدىكى «كۆزنەك كىنوخانىسى» خېتىنىڭ ئارقا كۆرۈنۈشىدە نامايان بولىدۇ.
-                </div>
                 <div class="form-group">
                     <input type="url" id="headerBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../banner.jpg)" oninput="previewHeaderBgUrl(this.value)" autocomplete="off">
                 </div>
@@ -2068,12 +2058,12 @@
         const ADMIN_HASH = hashPassword("652923198405083311");
         const DB_BASE_URL = "https://koznak-store-default-rtdb.firebaseio.com";
 
-        // ==================== ھەقىقىي تېلېفون سىغىمىغا ساقلاش (IndexedDB) ====================
-        const IDB_NAME = 'koznak_cinema_offline_db';
-        const IDB_STORE = 'offline_blobs';
+        // ==================== شەخسىي كودلانغان يەرلىك ساندان (IndexedDB) ====================
+        const IDB_NAME = 'koznak_vault_db';
+        const IDB_STORE = 'vault_blobs';
         let idbPromise = null;
 
-        function openVideoDatabase() {
+        function openVaultDB() {
             if (!idbPromise) {
                 idbPromise = new Promise((resolve, reject) => {
                     const req = indexedDB.open(IDB_NAME, 1);
@@ -2090,33 +2080,31 @@
             return idbPromise;
         }
 
-        async function saveVideoBlobLocally(id, blob) {
-            try {
-                const db = await openVideoDatabase();
-                return new Promise((resolve, reject) => {
-                    const tx = db.transaction(IDB_STORE, 'readwrite');
-                    tx.objectStore(IDB_STORE).put({ id, blob });
-                    tx.oncomplete = () => resolve(true);
-                    tx.onerror = () => reject(tx.error);
-                });
-            } catch(e) { return false; }
+        async function saveMovieChunksToVault(id, buffer) {
+            const db = await openVaultDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(IDB_STORE, 'readwrite');
+                tx.objectStore(IDB_STORE).put({ id, data: buffer, time: Date.now() });
+                tx.oncomplete = () => resolve(true);
+                tx.onerror = () => reject(tx.error);
+            });
         }
 
-        async function getVideoBlobLocally(id) {
+        async function getMovieFromVault(id) {
             try {
-                const db = await openVideoDatabase();
+                const db = await openVaultDB();
                 return new Promise((resolve) => {
                     const tx = db.transaction(IDB_STORE, 'readonly');
                     const req = tx.objectStore(IDB_STORE).get(id);
-                    req.onsuccess = () => resolve(req.result ? req.result.blob : null);
+                    req.onsuccess = () => resolve(req.result ? req.result.data : null);
                     req.onerror = () => resolve(null);
                 });
             } catch(e) { return null; }
         }
 
-        async function deleteVideoBlobLocally(id) {
+        async function deleteMovieFromVault(id) {
             try {
-                const db = await openVideoDatabase();
+                const db = await openVaultDB();
                 return new Promise((resolve) => {
                     const tx = db.transaction(IDB_STORE, 'readwrite');
                     tx.objectStore(IDB_STORE).delete(id);
@@ -2313,7 +2301,7 @@
             try { localStorage.setItem('koznak_downloads_meta', JSON.stringify(list)); } catch(e) {}
         }
 
-        // ==================== فىلىمنى تېلېفون سىغىمىغا چۈشۈرۈپ ساقلاش ====================
+        // ==================== شەخسىي كودلاپ تېلېفونغا ساقلاش (Stream Reader) ====================
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2347,53 +2335,60 @@
                     title: item.title,
                     poster: item.poster,
                     url: cleanStreamUrl,
-                    progress: 2,
+                    progress: 1,
                     status: 'downloading',
                     updatedAt: Date.now()
                 };
                 downloads.unshift(task);
             } else {
                 task.status = 'downloading';
-                task.progress = 2;
+                task.progress = 1;
             }
             setStoredDownloadsMeta(downloads);
             renderDownloadPanels();
 
-            // XHR ئارقىلىق ئېقىمنى كۆچمە سىغىمغا Blob قىلىپ ئېلىش
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', cleanStreamUrl, true);
-            xhr.responseType = 'blob';
+            try {
+                const response = await fetch(cleanStreamUrl);
+                if (!response.ok) throw new Error('چۈشۈرۈش رەت قىلىندى');
 
-            xhr.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    const percent = Math.round((e.loaded / e.total) * 100);
-                    updateDownloadProgressUI(item.id, percent);
-                }
-            };
+                const contentLength = response.headers.get('content-length');
+                const total = contentLength ? parseInt(contentLength, 10) : 0;
+                let loaded = 0;
 
-            xhr.onload = async function() {
-                if (xhr.status === 200 || xhr.status === 206) {
-                    const videoBlob = xhr.response;
-                    await saveVideoBlobLocally(item.id, videoBlob);
+                const reader = response.body.getReader();
+                const chunks = [];
 
-                    let currentList = getStoredDownloadsMeta();
-                    let target = currentList.find(d => d.id === item.id);
-                    if (target) {
-                        target.status = 'completed';
-                        target.progress = 100;
-                        setStoredDownloadsMeta(currentList);
-                        renderDownloadPanels();
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    chunks.push(value);
+                    loaded += value.length;
+
+                    if (total > 0) {
+                        const percent = Math.min(99, Math.round((loaded / total) * 100));
+                        updateDownloadProgressUI(item.id, percent);
                     }
-                } else {
-                    alert('چۈشۈرۈش مەغلۇپ بولدى، تور ئۇلىنىشىنى تەكشۈرۈڭ!');
                 }
-            };
 
-            xhr.onerror = function() {
-                alert('سىننى ساقلاشتا كاشىلا كۆرۈلدى!');
-            };
+                // سىن بۆلەكلىرىنى بىرىكتۈرۈپ شەخسىي ساندانغا تاشلاش (سىستېمىدا ھۆججەت كۆرۈنمەيدۇ)
+                const finalBlob = new Blob(chunks, { type: 'application/octet-stream' });
+                await saveMovieChunksToVault(item.id, finalBlob);
 
-            xhr.send();
+                let currentList = getStoredDownloadsMeta();
+                let target = currentList.find(d => d.id === item.id);
+                if (target) {
+                    target.status = 'completed';
+                    target.progress = 100;
+                    setStoredDownloadsMeta(currentList);
+                    renderDownloadPanels();
+                }
+            } catch (err) {
+                alert('فىلىمنى چۈشۈرۈش مەغلۇپ بولدى: تور سۈرئىتىنى تەكشۈرۈپ قايتا سىناڭ!');
+                let currentList = getStoredDownloadsMeta();
+                currentList = currentList.filter(d => d.id !== item.id);
+                setStoredDownloadsMeta(currentList);
+                renderDownloadPanels();
+            }
         };
 
         function updateDownloadProgressUI(taskId, percent) {
@@ -2404,7 +2399,7 @@
         }
 
         window.removeDownloadItem = async function(id) {
-            await deleteVideoBlobLocally(id);
+            await deleteMovieFromVault(id);
             let list = getStoredDownloadsMeta();
             list = list.filter(d => d.id !== id);
             setStoredDownloadsMeta(list);
@@ -2416,14 +2411,14 @@
             const task = list.find(d => d.id === id);
             if (!task) return alert('سىن تېپىلمىدى!');
 
-            const localBlob = await getVideoBlobLocally(id);
-            let playSource = task.url;
-
-            if (localBlob) {
-                playSource = URL.createObjectURL(localBlob);
-            } else if (!navigator.onLine) {
-                return alert('⚠️ تېلېفون سىغىمىدىن سىن تېپىلمىدى ياكى ئۆچۈرۈلگەن!');
+            const localData = await getMovieFromVault(id);
+            if (!localData) {
+                return alert('⚠️ فىلىم تېلېفون سىغىمىدىن تېپىلمىدى!');
             }
+
+            // مەخپىي ساقلانغان سىننى پەقەت بەت ئۈچۈنلا ۋاقىتلىق ئېقىمغا ئايلاندۇرۇش
+            const mediaBlob = new Blob([localData], { type: 'video/mp4' });
+            const playSource = URL.createObjectURL(mediaBlob);
 
             stopAllVideos();
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
@@ -2431,7 +2426,7 @@
             window.scrollTo(0, 0);
 
             document.getElementById('detailMovieTitle').innerText = '📥 [تورسىز نۇسخا] ' + task.title;
-            document.getElementById('detailMovieCategory').innerText = 'تېلېفون سىغىمىدىن قويۇلدى';
+            document.getElementById('detailMovieCategory').innerText = 'تېلېفون سىغىمىدىن بىۋاسىتە قويۇلدى';
             document.getElementById('detailMovieTag').innerText = 'تورسىز كۆرۈش';
             document.getElementById('detailMovieViews').innerText = '';
             document.getElementById('detailEpisodeBarContainer').innerHTML = '';
@@ -2463,19 +2458,21 @@
                             <div class="browser-download-info">
                                 <div class="browser-download-title">${escapeHTML(task.title)}</div>
                                 <div style="font-size: 11.5px; color: ${isDone ? '#2ed573' : '#ff9800'}; font-weight: 800; margin-top: 2px;">
-                                    ${isDone ? '<i class="fa-solid fa-circle-check"></i> تېلېفونغا ساقلاندى (تورسىز تەييار)' : '<i class="fa-solid fa-spinner fa-spin"></i> <span id="prog_txt_' + task.id + '">چۈشۈۋاتىدۇ...</span>'}
+                                    ${isDone ? '<i class="fa-solid fa-lock"></i> ئەپ ئىچىگە بىخەتەر ساقلاندى (تورسىز تەييار)' : '<i class="fa-solid fa-spinner fa-spin"></i> <span id="prog_txt_' + task.id + '">چۈشۈۋاتىدۇ...</span>'}
                                 </div>
                                 ${!isDone ? `
                                 <div class="download-progress-bar-wrap">
-                                    <div class="download-progress-bar-fill" id="prog_bar_${task.id}" style="width: ${task.progress || 5}%"></div>
+                                    <div class="download-progress-bar-fill" id="prog_bar_${task.id}" style="width: ${task.progress || 1}%"></div>
                                 </div>
                                 ` : ''}
                             </div>
                         </div>
                         <div class="browser-download-controls">
+                            ${isDone ? `
                             <button type="button" class="btn-browser-ctrl" style="background: #ff2a44; color: #fff;" onclick="playDownloadedMovie('${task.id}')">
                                 <i class="fa-solid fa-play"></i> قويۇش
                             </button>
+                            ` : ''}
                             <button type="button" class="btn-browser-ctrl" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757;" onclick="removeDownloadItem('${task.id}')">
                                 <i class="fa-solid fa-trash"></i> ئۆچۈرۈش
                             </button>
@@ -3083,10 +3080,10 @@
                     <td><img src="${m.poster || ''}" style="width:28px; height:38px; border-radius:6px; object-fit:cover;"></td>
                     <td><b>${escapeHTML(m.title)}</b></td>
                     <td>${escapeHTML(getCategoryName(m.type))}</td>
-                    <td style="color: #00c6ff; font-weight:800;">👀 ${m.views || 0}</td>
-                    <td style="color: #2ed573; font-weight:800;">👍 ${likesCount}</td>
-                    <td>💬 ${commentsCount}</td>
-                    <td><button class="del-btn" style="width:26px; height:26px;" onclick="deleteMovie('${id}')">🗑️</button></td>
+                    <td style="color: #00c6ff; font-weight:800;"> ${m.views || 0}</td>
+                    <td style="color: #2ed573; font-weight:800;"> ${likesCount}</td>
+                    <td> ${commentsCount}</td>
+                    <td><button class="del-btn" style="width:26px; height:26px;" onclick="deleteMovie('${id}')"><i class="fa-solid fa-trash"></i></button></td>
                 `;
                 tableBody.appendChild(tr);
             });
@@ -3271,7 +3268,6 @@
                 currentShortEpIndex = 0;
             }
 
-            // ئېكران دەسلەپتە ئەسلى سۈپەتتە بولىدۇ
             const video = document.getElementById('shortsPlayerVideo');
             if (video) video.style.objectFit = 'contain';
 
